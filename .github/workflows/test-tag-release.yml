@@ -22,13 +22,16 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Set execute permission for Maven Wrapper
+        run: chmod +x ./mvnw
+
       - name: Install dependencies
         run: |
-          ./mvnw install  
+          ./mvnw install
 
       - name: Run tests
         run: |
-          ./mvnw test      
+          ./mvnw test 
 
   tag-and-release:
     name: Tag and Release
