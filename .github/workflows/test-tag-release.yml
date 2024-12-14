@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: Install dependencies
         run: |
@@ -41,23 +43,32 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Determine version
-        id: version
+      - name: Get latest tag
+        id: get_tag
         run: |
-          VERSION="v1.0.$(date +'%Y%m%d%H%M%S')"
-          echo "version=$VERSION" >> $GITHUB_ENV
-          echo "::set-output name=version::$VERSION"
+          TAG=$(git describe --tags `git rev-list --tags --max-count=1` || echo "0.0.0")
+          echo "Latest tag: $TAG"
+          echo "tag=$TAG" >> $GITHUB_ENV
+
+      - name: Increment version
+        id: increment_version
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ env.tag }}"
+          PATCH=$((PATCH + 1)) # PATCH 号递增
+          NEW_TAG="$MAJOR.$MINOR.$PATCH"
+          echo "New tag: $NEW_TAG"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_ENV
 
       - name: Create Git Tag
         run: |
-          git tag ${{ steps.version.outputs.version }}
-          git push origin ${{ steps.version.outputs.version }}
+          git tag ${{ env.new_tag }}
+          git push origin ${{ env.new_tag }}
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          release_name: Release ${{ steps.version.outputs.version }}
+          tag_name: ${{ env.new_tag }}
+          release_name: Release ${{ env.new_tag }}
           body: |
             - Automated release by GitHub Actions.
           draft: false
