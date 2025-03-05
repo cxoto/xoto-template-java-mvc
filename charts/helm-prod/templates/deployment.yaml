@@ -22,7 +22,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "{{ .Values.spring.profile | default \"production\" }}"
+              value: "{{ .Values.spring.profile }}"
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
