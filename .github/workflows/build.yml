@@ -15,5 +15,6 @@ jobs:
 
       - name: Build and push Docker image using Jib
         run: |
+          chmod +x mvnw
           cd application
           ../mvnw compile jib:build
