@@ -96,7 +96,7 @@
                 <version>3.4.4</version>
                 <configuration>
                     <to>
-                        <image>registry.xoto.cc/xoto/demo:1.0</image>
+                        <image>fn.xoto.cc/xoto/demo:1.0</image>
                     </to>
                     <from>
                         <image>eclipse-temurin:17-jre-alpine</image>
