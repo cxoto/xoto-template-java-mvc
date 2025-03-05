@@ -20,8 +20,18 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build and push Docker image using Jib
+      - name: Build and push Docker image
         run: |
           chmod +x mvnw
           cd application
           ../mvnw compile jib:build
+
+      - name: Package Helm Chart
+        run: |
+          cd charts
+          helm package helm-prod/ -d .
+
+      - name: Push Helm Chart to self-hosted registry
+        run: |
+          helm repo add my-charts https://registry.xoto.cc --username ${{ secrets.CHART_USERNAME }} --password ${{ secrets.CHART_PASSWORD }}
+          helm cm-push *.tgz my-charts
