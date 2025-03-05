@@ -1,0 +1,19 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - master  # 仅在 PR 合并到 master 时触发
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and push Docker image using Jib
+        run: |
+          cd application \
+          ../mvnw compile jib:build
