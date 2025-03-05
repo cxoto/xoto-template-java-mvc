@@ -13,13 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
-
       - name: Build and push Docker image
         run: |
           chmod +x mvnw
@@ -33,5 +26,5 @@ jobs:
 
       - name: Push Helm Chart to self-hosted registry
         run: |
-          helm repo add my-charts https://registry.xoto.cc --username ${{ secrets.CHART_USERNAME }} --password ${{ secrets.CHART_PASSWORD }}
+          helm repo add my-charts https://registry.xoto.cc
           helm cm-push *.tgz my-charts
