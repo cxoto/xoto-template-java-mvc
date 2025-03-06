@@ -20,9 +20,6 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "{{ .Values.spring.profile }}"
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
