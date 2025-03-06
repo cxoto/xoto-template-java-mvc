@@ -10,7 +10,6 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -29,12 +28,14 @@ jobs:
         run: |
           ./mvnw install
 
+
       - name: Run tests
         run: |
           ./mvnw test 
 
-  tag-and-release:
-    name: Tag and Release
+
+  release-build-push:
+    name: Release & build & push
     runs-on: self-hosted
     needs: test
     steps:
@@ -61,3 +62,21 @@ jobs:
             - ${{ steps.tag_version.outputs.changelog }}
           draft: false
           prerelease: false
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and push Docker image
+        run: |
+          chmod +x mvnw
+          cd application
+          ../mvnw compile jib:build
+
+      - name: Package Helm Chart and Push Helm Chart
+        run: |
+          cd charts
+          make replace-version VERSION=${{ steps.tag_version.outputs.new_tag }}
+          make clean
+          helm package helm-prod/ -d .
+          helm repo add local-charts http://http://192.168.1.4:18080
+          helm cm-push *.tgz local-charts
